@@ -1,0 +1,147 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container my-3">
+    <!-- 질문 -->
+    <h2 class="border-bottom py-2" th:text="${question.subject}"></h2>
+    <div class="card my-3">
+        <div class="card-body">
+            <div class="card-text" style="white-space: pre-line;" th:text="${question.content}"></div>
+            <div class="d-flex justify-content-end">
+                <div class="badge bg-light text-dark p-2 text-start">
+                    <div th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 답변의 갯수 표시 -->
+    <h5 id="answerCountText" class="border-bottom my-3 py-2"></h5>
+    <!-- 답변 반복 시작 -->
+    <div id="answerListArea"></div>
+    <!-- 답변 반복 끝  -->
+    <!-- 답변 작성 -->
+    <!-- <form th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}" method="post" class="my-3"> -->
+    <input type="hidden" id="questionId" th:value="${question.id}">
+    <form id="answerForm" th:object="${answerForm}" class="my-3">
+    	<!-- <div th:replace="~{form_errors :: formErrorsFragment}"></div> -->
+    	<div id="errorMessage" class="alert alert-danger d-none" role="alert"></div>
+        <textarea th:field="*{content}" rows="10" class="form-control"></textarea>
+        <input type="submit" value="답변등록" class="btn btn-primary my-2">
+    </form>
+    	<a th:href="@{/question/update/{id}(id=${question.id})}">수정</a>
+  		<a id="deleteButton">삭제</a>
+    <script>
+		let answerForm = document.querySelector("#answerForm");
+		let errorMessageDiv = document.querySelector("#errorMessage");
+		let questionId = parseInt(document.querySelector("#questionId").value);
+		// 답변 등록
+		if(answerForm){
+			answerForm.addEventListener("submit", e => {
+				e.preventDefault();
+	
+				if(!confirm("답변을 등록하시겠습니까?")) return;
+	
+				const param = {   
+					content: document.querySelector("#content").value
+				};
+				
+				fetch("/answer/create/"+questionId, {
+					method: 'post',
+					headers: {
+						'Content-Type': 'application/json;charset=utf-8'
+					},
+					body: JSON.stringify(param)
+				})
+				.then(response => response.json())
+				.then(json => {
+					if(json.res_code === "400"){
+						errorMessageDiv.innerHTML = json.res_msg; 
+						errorMessageDiv.classList.remove("d-none");
+					}else{
+						errorMessageDiv.classList.add("d-none");
+						alert(json.res_msg);
+						location.href = "/question/detail/"+questionId;
+					}
+				});
+			});
+		}
+		// 질문 삭제
+		let deleteButton = document.querySelector("#deleteButton");
+		if(deleteButton){
+			deleteButton.addEventListener("click", () => {
+				if(!confirm("정말로 질문을 삭제하시겠습니까?")) return;
+
+				fetch("/question/delete/" + questionId, {
+					method: 'DELETE'
+				})
+				.then(response => response.json())
+				.then(json => {
+					if(json.res_code === "200"){
+						alert(json.res_msg);
+						location.href = "/question/list";
+					} else {
+						alert(json.res_msg);
+					}
+				});
+			});
+		}
+		let answerListArea = document.querySelector("#answerListArea");
+		let answerCountText = document.querySelector("#answerCountText");
+		let answerCount = 0;
+		// 답변 동기화
+		function renderAnswers(data) {
+		    answerListArea.innerHTML = ""; // 기존 삭제
+		    data.forEach(answer => {
+		        const newCard = document.createElement("div");
+		        newCard.classList.add("card", "my-3");
+		        newCard.innerHTML = `
+		            <div class="card-body">
+		                <div class="card-text" style="white-space: pre-line;">${answer.content}</div>
+		                <div class="d-flex justify-content-end">
+		                    <div class="badge bg-light text-dark p-2 text-start">
+		                        <div>${answer.createDate}</div>
+		                    </div>
+		                </div>
+		            </div>
+		        `;
+		        answerListArea.appendChild(newCard);
+		    });
+		    answerCount = data.length;
+		    if (answerCountText) {
+		        answerCountText.textContent = `${data.length}개의 답변이 있습니다.`;
+		    }
+		}
+		
+		fetch("/answer/list/" + questionId)
+	    .then(res => res.json())
+	    .then(data => renderAnswers(data));
+		
+		setInterval(() => {
+		    fetch("/answer/list/" + questionId)
+		        .then(res => res.json())
+		        .then(data => {
+		            if (data.length > answerCount) {
+		                for (let i = answerCount; i < data.length; i++) {
+		                    const answer = data[i];
+		                    const newCard = document.createElement("div");
+		                    newCard.classList.add("card", "my-3");
+		                    newCard.innerHTML = `
+		                        <div class="card-body">
+		                            <div class="card-text" style="white-space: pre-line;">${answer.content}</div>
+		                            <div class="d-flex justify-content-end">
+		                                <div class="badge bg-light text-dark p-2 text-start">
+		                                    <div>${answer.createDate}</div>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    `;
+		                    answerListArea.appendChild(newCard);
+		                }
+		                answerCount = data.length;
+		                if (answerCountText) {
+		                    answerCountText.textContent = `${data.length}개의 답변이 있습니다.`;
+		                }
+		            }
+		        });
+		}, 1000);
+	</script>
+</div>
+</html>

@@ -1,0 +1,41 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container my-3">
+    <!-- 질문 -->
+    <h2 class="border-bottom py-2" th:text="${board.title}"></h2>
+    <div class="card my-3">
+        <div class="card-body">
+            <div class="card-text" style="white-space: pre-line;" th:text="${board.content}"></div>
+            <div class="d-flex justify-content-end">
+                <div class="badge bg-light text-dark p-2 text-start">
+                    <div th:text="${#temporals.format(board.reg_date, 'yyyy-MM-dd HH:mm')}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="boardId" th:value="${board.bno}">
+    	<a th:href="@{/board/update/{bno}(bno=${board.bno})}">수정</a>
+  		<a id="boardDeleteButton">삭제</a>
+  	<script>
+	  	let boardDeleteButton = document.querySelector("#boardDeleteButton");
+	  	let boardId = parseInt(document.querySelector("#boardId").value);
+		if(boardDeleteButton){
+			boardDeleteButton.addEventListener("click", () => {
+				if(!confirm("정말로 질문을 삭제하시겠습니까?")) return;
+	
+				fetch("/board/delete/" + boardId, {
+					method: 'DELETE'
+				})
+				.then(response => response.json())
+				.then(json => {
+					if(json.res_code === "200"){
+						alert(json.res_msg);
+						location.href = "/board/list";
+					} else {
+						alert(json.res_msg);
+					}
+				});
+			});
+		}
+  	</script>
+</div>
+</html>
