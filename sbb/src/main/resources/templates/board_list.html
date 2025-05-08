@@ -9,15 +9,47 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="board, loop : ${boardList}">
-					<td th:text="${loop.count}"></td>
-					<td >
-						<a th:href="@{|/board/detail/${board.bno}|}" th:text="${board.title}"></a>
-					</td>
-					<td th:text="${#temporals.format(board.reg_date, 'yyyy-MM-dd HH:mm')}"></td>
-				</tr>
-			</tbody>
+	            <tr th:each="board, loop : ${boardList}">
+	                <td th:text="${paging.totalData - ((paging.nowPage - 1) * paging.numPerPage) - loop.index}"></td>
+	                <td>
+	                    <a th:href="@{|/board/detail/${board.bno}|}" th:text="${board.title}"></a>
+	                </td>
+	                <td th:text="${#temporals.format(board.regDate, 'yyyy-MM-dd HH:mm')}"></td>
+	            </tr>
+	        </tbody>
 		</table>
+		<!--<div th:if="${!paging.isEmpty()}">
+		    <ul class="pagination justify-content-center">
+		        <li class="page-item" th:classappend="${!paging.hasPrevious()} ? 'disabled'">
+		            <a class="page-link" th:href="@{|/board/list?page=${paging.number - 1}|}">이전</a>
+		        </li>
+
+		        <li class="page-item"
+		            th:each="pageNum : ${#numbers.sequence(startPage, endPage)}"
+		            th:classappend="${pageNum == paging.number} ? 'active'">
+		            <a class="page-link" th:href="@{|/board/list?page=${pageNum}|}" th:text="${pageNum + 1}"></a>
+		        </li>
+
+		        <li class="page-item" th:classappend="${!paging.hasNext()} ? 'disabled'">
+		            <a class="page-link" th:href="@{|/board/list?page=${paging.number + 1}|}">다음</a>
+		        </li>
+		    </ul>
+		</div>-->
+		<div class="my-3" th:if="${paging.totalPage > 1}">
+	        <ul class="pagination justify-content-center">
+	            <li class="page-item" th:classappend="${!paging.prev} ? 'disabled'">
+	                <a class="page-link" th:href="@{|/board/list?page=${paging.pageBarStart - 1}|}">이전</a>
+	            </li>
+	            <li class="page-item"
+	                th:each="i : ${#numbers.sequence(paging.pageBarStart, paging.pageBarEnd)}"
+	                th:classappend="${i == paging.nowPage} ? 'active'">
+	                <a class="page-link" th:href="@{|/board/list?page=${i}|}" th:text="${i}"></a>
+	            </li>
+	            <li class="page-item" th:classappend="${!paging.next} ? 'disabled'">
+	                <a class="page-link" th:href="@{|/board/list?page=${paging.pageBarEnd + 1}|}">다음</a>
+	            </li>
+	        </ul>
+	    </div>
 		<a th:href="@{/board/create}" class="btn btn-primary">질문 등록하기</a>
 	</div>
 </html>

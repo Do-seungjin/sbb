@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,16 @@ public class BoardController {
 
   private final BoardService boardService;
 
-
   @GetMapping("/list")
-  public String list(Model model) {
-    List<Board> boardList = boardService.getList();
+  public String list(Model model, @RequestParam(value = "page", defaultValue = "1") int page) {
+    Paging paging = new Paging();
+    paging.setNowPage(page);
+    paging.setTotalData(boardService.getTotalDataCount());
+    paging.calcPaging(); // limitPageNo, totalPage 등 계산
+
+    List<Board> boardList = boardService.getList(paging.getLimitPageNo(), paging.getNumPerPage());
     model.addAttribute("boardList", boardList);
+    model.addAttribute("paging", paging);
     return "board_list";
   }
 
@@ -68,14 +74,14 @@ public class BoardController {
     model.addAttribute("board", board);
     return "board_detail";
   }
-  
+
   @GetMapping(value = "/update/{bno}")
   public String update(Model model, @PathVariable("bno") Integer bno) {
     Board board = boardService.getBoard(bno);
     model.addAttribute("board", board);
     return "board_update_form";
   }
-  
+
   @ResponseBody
   @PostMapping("/update/{bno}")
   public Map<String, Object> questionUpdate(@RequestBody @Valid BoardForm boardForm,
@@ -100,7 +106,7 @@ public class BoardController {
     return map;
 
   }
-  
+
   @ResponseBody
   @DeleteMapping("/delete/{bno}")
   public Map<String, Object> boardDelete(@PathVariable("bno") Integer bno) {

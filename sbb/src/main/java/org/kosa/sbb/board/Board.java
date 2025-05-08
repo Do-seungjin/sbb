@@ -31,7 +31,7 @@ public class Board {
   @Column
   private String passwd;// 게시물 비번
   @Column
-  private LocalDateTime reg_date;// 작성일
+  private LocalDateTime regDate;// 작성일
   @Column
   private Integer view_count;// 보기 수
 }

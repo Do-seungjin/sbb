@@ -4,6 +4,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.kosa.sbb.DataNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
@@ -12,11 +16,11 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 
   private final BoardRepository boardRepository;
-  
+
   public List<Board> getList() {
     return boardRepository.findAll();
   }
-  
+
   public Board getBoard(Integer bno) {
     Optional<Board> board = boardRepository.findById(bno);
     if (board.isPresent()) {
@@ -25,16 +29,16 @@ public class BoardService {
       throw new DataNotFoundException("board not found");
     }
   }
-  
+
   public Board create(String subject, String content) {
     Board b = new Board();
     b.setTitle(subject);
     b.setContent(content);
-    b.setReg_date(LocalDateTime.now());
+    b.setRegDate(LocalDateTime.now());
     Board result = boardRepository.save(b);
     return result;
   }
-  
+
   public Board update(String title, String content, Integer bno) {
     Optional<Board> ob = boardRepository.findById(bno);
     if (ob.isPresent()) {
@@ -47,23 +51,32 @@ public class BoardService {
       throw new DataNotFoundException("question not found");
     }
   }
-  
+
   public void delete(Integer bno) {
     Optional<Board> ob = boardRepository.findById(bno);
     if (ob.isPresent()) {
-      Board board= ob.get();
+      Board board = ob.get();
       boardRepository.delete(board);
     } else {
       throw new DataNotFoundException("board not found");
     }
   }
-//  public Board create(String subject, String content) {
-//    Question q = new Question();
-//    q.setSubject(subject);
-//    q.setContent(content);
-//    q.setCreateDate(LocalDateTime.now());
-//    Question result = questionRepository.save(q);
-//    return result;
-//  }
+
+  public List<Board> getList(int limitPageNo, int numPerPage) {
+    return boardRepository.findListByPaging(limitPageNo, numPerPage);
+  }
+
+  public int getTotalDataCount() {
+    return (int) boardRepository.count();
+  }
+
+  // public Board create(String subject, String content) {
+  // Question q = new Question();
+  // q.setSubject(subject);
+  // q.setContent(content);
+  // q.setCreateDate(LocalDateTime.now());
+  // Question result = questionRepository.save(q);
+  // return result;
+  // }
 
 }
