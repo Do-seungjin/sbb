@@ -6,10 +6,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 public class SiteUser {
   @Id
@@ -23,5 +25,15 @@ public class SiteUser {
 
   @Column(unique = true)
   private String email;
+
+  public static SiteUser of(String username, String password, String email) {
+    SiteUser user = new SiteUser();
+    
+    user.username = username;
+    user.email = email;
+    user.password = password;
+    
+    return user;
+  }
 
 }

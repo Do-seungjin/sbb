@@ -9,14 +9,14 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
   private final UserRepository userRepository;
-  private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+  private final BCryptPasswordEncoder passwordEncoder;
 
   public SiteUser create(String username, String email, String password) {
-    SiteUser user = new SiteUser();
-    user.setUsername(username);
-    user.setEmail(email);
-    user.setPassword(passwordEncoder.encode(password));
+    // 회원 정보 객체 생성
+    SiteUser user = SiteUser.of(username, passwordEncoder.encode(password), email);
+    // 저장소에 회원 정보 등록
     userRepository.save(user);
+
     return user;
   }
 }
