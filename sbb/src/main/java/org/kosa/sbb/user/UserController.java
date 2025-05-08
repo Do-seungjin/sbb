@@ -15,11 +15,13 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
   private final UserService userService;
 
+  // 회원 가입 화면 이동
   @GetMapping("/signup")
   public String signup(UserCreateForm userCreateForm) {
     return "signup_form";
   }
 
+  // 회원 가입 요청 수행
   @PostMapping("/signup")
   public String signup(@Valid UserCreateForm userCreateForm, BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
@@ -44,4 +46,13 @@ public class UserController {
     }
     return "redirect:/";
   }
+
+  // 로그인 화면 이동
+  @GetMapping("/login")
+  public String login() {
+    return "login_form";
+  }
+
+
+
 }

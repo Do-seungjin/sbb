@@ -16,7 +16,8 @@ public class SecurityConfig {
   SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
         .requestMatchers(new AntPathRequestMatcher("/**")).permitAll())
-        .csrf((csrf) -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/**")));
+        .csrf((csrf) -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/**")))
+        .formLogin(formLogin -> formLogin.loginPage("/user/login").defaultSuccessUrl("/"));
     return http.build();
   }
 
