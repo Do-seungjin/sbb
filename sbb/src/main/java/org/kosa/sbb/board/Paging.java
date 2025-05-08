@@ -41,9 +41,6 @@ public class Paging {
     // 더블로 계산하면 소수점으로 결과가 나오고 이를 올림
     totalPage = (int) Math.ceil((double) totalData / numPerPage);
 
-    // 5개씩끊었을때 해당 페이징바의 시작점 구하는방법
-    // 3번페이지 -> 1번
-    // 8번페이지 -> 6번
     pageBarStart = ((nowPage - 1) / pageBarSize) * pageBarSize + 1;
     pageBarEnd = pageBarStart + pageBarSize - 1;
     if (pageBarEnd > totalPage)
