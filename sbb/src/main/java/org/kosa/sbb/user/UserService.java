@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
   private final UserRepository userRepository;
-  private final BCryptPasswordEncoder passwordEncoder;
+  private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
   public SiteUser create(String username, String email, String password) {
     // 회원 정보 객체 생성

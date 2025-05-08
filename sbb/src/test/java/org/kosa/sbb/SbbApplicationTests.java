@@ -1,15 +1,22 @@
 package org.kosa.sbb;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import org.junit.jupiter.api.Test;
 import org.kosa.sbb.answer.AnswerRepository;
 import org.kosa.sbb.question.QuestionRepository;
 import org.kosa.sbb.question.QuestionService;
+import org.kosa.sbb.user.SiteUser;
+import org.kosa.sbb.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 @SpringBootTest
 class SbbApplicationTests {
 
@@ -112,5 +119,15 @@ class SbbApplicationTests {
   // questionService.create(String.format("테스트 데이터 입니다:[%3d]", i), "내용 없음");
   // }
   // }
+  @Autowired
+  UserService userService;
   
+  @Test
+  void register() {
+    SiteUser user = userService.create("hong", "hong@kosa.org", "1004");
+    assertNotNull(user);
+    assertNotEquals(0, user.getId());
+    log.info("user.id = "+user.getId());
+    log.info("user.id = {}",user.getId());
+  }
 }
