@@ -8,6 +8,7 @@ import org.kosa.sbb.answer.AnswerForm;
 import org.kosa.sbb.user.SiteUser;
 import org.kosa.sbb.user.UserService;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -101,12 +102,13 @@ public class QuestionController {
     return map;
   }
 
-
+  @PreAuthorize("isAuthenticated()")
   @GetMapping("/create")
   public String questionCreate(QuestionForm questionForm) {
     return "question_form";
   }
-
+  
+  @PreAuthorize("isAuthenticated()")
   @ResponseBody
   @PostMapping("/create")
   public Map<String, Object> questionCreate(@RequestBody @Valid QuestionForm questionForm,
