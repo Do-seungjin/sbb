@@ -50,6 +50,7 @@ public class QuestionService {
       Question question = oq.get(); // Optional에서 꺼냄
       question.setSubject(subject);
       question.setContent(content);
+      question.setModifyDate(LocalDateTime.now());
       Question result = questionRepository.save(question);
       return result;
     } else {
