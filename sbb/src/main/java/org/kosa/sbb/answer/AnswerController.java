@@ -32,7 +32,7 @@ public class AnswerController {
   private final QuestionService questionService;
   private final AnswerService answerService;
   private final UserService userService;
-  
+
   @PreAuthorize("isAuthenticated()")
   @ResponseBody
   @PostMapping("/create/{id}")
@@ -56,7 +56,7 @@ public class AnswerController {
       map.put("res_msg", errorMessages.toString().trim());
       return map;
     }
-    if (answerService.create(question, answerForm.getContent(),siteUser) == null) {
+    if (answerService.create(question, answerForm.getContent(), siteUser) == null) {
       map.put("res_code", "400");
       map.put("res_msg", "답변 등록에 실패하였습니다.");
     } else {
@@ -77,9 +77,9 @@ public class AnswerController {
       map.put("content", a.getContent());
       if (a.getAuthor() != null) {
         map.put("author", a.getAuthor().getUsername());
-    } else {
+      } else {
         map.put("author", "익명");
-    }
+      }
       map.put("createDate",
           a.getCreateDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
       result.add(map);

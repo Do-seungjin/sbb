@@ -13,6 +13,14 @@
                     <div th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
             </div>
+			<div class="my-3">
+	            <a th:href="@{/question/update/{id}(id=${question.id})}" class="btn btn-sm btn-outline-secondary"
+	                sec:authorize="isAuthenticated()"
+	                th:if="${question.author != null and #authentication.getPrincipal().getUsername() == question.author.username}"
+	                th:text="수정"></a>
+		  		<a id="deleteButton" class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
+				th:if="${question.author != null and #authentication.getPrincipal().getUsername() == question.author.username}">삭제</a>
+	        </div>
         </div>
     </div>
     <!-- 답변의 갯수 표시 -->
@@ -30,8 +38,6 @@
         <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control" rows="10"></textarea>
         <input type="submit" value="답변등록" class="btn btn-primary my-2">
     </form>
-    	<a th:href="@{/question/update/{id}(id=${question.id})}">수정</a>
-  		<a id="deleteButton">삭제</a>
     <script>
 		let answerForm = document.querySelector("#answerForm");
 		let errorMessageDiv = document.querySelector("#errorMessage");
