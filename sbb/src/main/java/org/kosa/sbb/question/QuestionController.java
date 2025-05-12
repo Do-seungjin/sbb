@@ -1,9 +1,12 @@
 package org.kosa.sbb.question;
 
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import org.kosa.sbb.answer.AnswerForm;
+import org.kosa.sbb.user.SiteUser;
+import org.kosa.sbb.user.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,7 +30,7 @@ public class QuestionController {
 
   // @Autowired (RequiredArgsController로 생략 가능)
   private final QuestionService questionService;
-
+  private final UserService userService;
 
   @GetMapping("/list")
   // @ResponseBody
@@ -107,7 +110,7 @@ public class QuestionController {
   @ResponseBody
   @PostMapping("/create")
   public Map<String, Object> questionCreate(@RequestBody @Valid QuestionForm questionForm,
-      BindingResult bindingResult) {
+      BindingResult bindingResult, Principal principal) {
     Map<String, Object> map = new HashMap<String, Object>();
     if (bindingResult.hasErrors()) {
       map.put("res_code", "400");
@@ -115,12 +118,11 @@ public class QuestionController {
       for (ObjectError error : bindingResult.getAllErrors()) {
         errorMessages.append(error.getDefaultMessage()).append("<br>");
       }
-
       map.put("res_msg", errorMessages.toString().trim());
       return map;
     }
-
-    if (questionService.create(questionForm.getSubject(), questionForm.getContent()) == null) {
+    SiteUser siteUser = this.userService.getUser(principal.getName());
+    if (questionService.create(questionForm.getSubject(), questionForm.getContent(),siteUser) == null) {
       map.put("res_code", "400");
       map.put("res_msg", "질문 등록에 실패하였습니다.");
     } else {
