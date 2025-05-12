@@ -75,6 +75,11 @@ public class AnswerController {
     for (Answer a : answers) {
       Map<String, String> map = new HashMap<>();
       map.put("content", a.getContent());
+      if (a.getAuthor() != null) {
+        map.put("author", a.getAuthor().getUsername());
+    } else {
+        map.put("author", "익명");
+    }
       map.put("createDate",
           a.getCreateDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
       result.add(map);
