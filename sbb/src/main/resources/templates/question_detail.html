@@ -165,14 +165,23 @@
 		        });
 		}, 1000);
 		// 추천 버튼 클릭 시 '정말로 추천하시겠습니까?' 메시지 창 띄우기 
-		const recommend_elements = document.getElementsByClassName("recommend");
-		Array.from(recommend_elements).forEach(function(element) {
-		    element.addEventListener('click', function() {
-		        if(confirm("정말로 추천하시겠습니까?")) {
-		            location.href = this.dataset.uri;
-		        };
-		    });
-		});
+		//const recommend_elements = document.getElementsByClassName("recommend");
+		//Array.from(recommend_elements).forEach(function(element) {
+		//    element.addEventListener('click', function() {
+		//        if(confirm("정말로 추천하시겠습니까?")) {
+		//            location.href = this.dataset.uri;
+		//        };
+		//    });
+		//});
+		const recommend = document.querySelector(".recommend");
+		if(recommend){
+			recommend.addEventListener("click", e=>{
+				e.preventDefault();
+				if(confirm("정말로 추천하시겠습니까?")){
+					location.href = e.target.dataset.uri;
+				};
+			});
+		};
 	</script>
 </div>
 </html>

@@ -73,7 +73,11 @@ public class QuestionService {
   
   // 추천 기능 
   public void vote(Question question, SiteUser siteUser) {
-    question.getVoter().add(siteUser);
+    if(question.getVoter().contains(siteUser)) {
+      question.getVoter().remove(siteUser);
+    }else {
+      question.getVoter().add(siteUser);
+    }
     this.questionRepository.save(question);
   }
 }
