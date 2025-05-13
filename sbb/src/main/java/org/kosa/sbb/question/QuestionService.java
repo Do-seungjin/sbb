@@ -21,7 +21,7 @@ public class QuestionService {
   public Page<Question> getList(int page) {
     List<Sort.Order> sorts = new ArrayList<>();
     sorts.add(Sort.Order.desc("createDate"));
-    Pageable pageable=PageRequest.of(page,10,Sort.by(sorts));
+    Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
     return questionRepository.findAll(pageable);
   }
 
@@ -33,7 +33,8 @@ public class QuestionService {
       throw new DataNotFoundException("question not found");
     }
   }
-
+  
+  // 등록 기능 
   public Question create(String subject, String content, SiteUser user) {
     Question q = new Question();
     q.setSubject(subject);
@@ -43,7 +44,8 @@ public class QuestionService {
     Question result = questionRepository.save(q);
     return result;
   }
-
+  
+  // 수정 기능 
   public Question update(String subject, String content, Integer id) {
     Optional<Question> oq = questionRepository.findById(id);
     if (oq.isPresent()) {
@@ -57,7 +59,8 @@ public class QuestionService {
       throw new DataNotFoundException("question not found");
     }
   }
-
+  
+  // 삭제 기능 
   public void delete(Integer id) {
     Optional<Question> oq = questionRepository.findById(id);
     if (oq.isPresent()) {
@@ -66,5 +69,11 @@ public class QuestionService {
     } else {
       throw new DataNotFoundException("question not found");
     }
+  }
+  
+  // 추천 기능 
+  public void vote(Question question, SiteUser siteUser) {
+    question.getVoter().add(siteUser);
+    this.questionRepository.save(question);
   }
 }
