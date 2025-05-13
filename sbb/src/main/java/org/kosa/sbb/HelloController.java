@@ -6,11 +6,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class HelloController {
-	@GetMapping("/hello")
-	@ResponseBody
-	public String hello() {
-		return "@@ ^_^ !~~ Hello World ~~! ^_^ @@";
-	}
+  @GetMapping("/hello")
+  @ResponseBody
+  public String hello() {
+    return "@@ ^_^ !~~ Hello World ~~! ^_^ @@";
+  }
 
-	
+  @GetMapping("/test")
+  public String test() {
+    return "test";
+  }
+
 }
